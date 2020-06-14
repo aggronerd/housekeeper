@@ -3,7 +3,6 @@ name: test and build
 jobs:
   build:
     runs-on: ubuntu-latest
-    needs: [lint, test]
     steps:
       - name: Install Go
         uses: actions/setup-go@v1
