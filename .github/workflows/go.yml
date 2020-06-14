@@ -6,23 +6,30 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  PROJECT_ROOT: "/home/runner/go/src/github.com/aggronerd/housekeeper"
+  PROJECT_ROOT_PARENT: "/home/runner/go/src/github.com/aggronerd"
+
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: "/home/runner/go/src/github.com/aggronerd"
     steps:
       - name: Set up Go 1.14
         uses: actions/setup-go@v2
         with:
           go-version: ^1.14
         id: go
-      - name: Check out code into the Go module directory
+      - name: Ensure project folder exists
+        run: |
+          mkdir -p ${PROJECT_ROOT_PARENT}
+      - name: Check out code into GOPATH/src
         uses: actions/checkout@v2
+        with:
+          path: go/src/github.com/aggronerd/housekeeper
       - name: Get dependencies
         run: |
+          cd ${PROJECT_ROOT}
           go get -v -t -d ./...
           if [ -f Gopkg.toml ]; then
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
@@ -30,4 +37,5 @@ jobs:
           fi
       - name: Build linux (x64) binary
         run: |
+          cd ${PROJECT_ROOT}
           GOOS=linux GOARCH=amd64 go build -o target/housekeeper-linux-x64  -v .
