@@ -36,5 +36,6 @@ jobs:
 
       - name: Build
         run: |
-          cd /home/runner/go/src/github.com/aggronerd/housekeeper
-          $GOROOT/bin/go build -v .
+          /bin/bash -c "
+            cd /home/runner/go/src/github.com/aggronerd/housekeeper;
+            $GOROOT/bin/go build -v ."
