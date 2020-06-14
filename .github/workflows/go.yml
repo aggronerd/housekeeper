@@ -32,8 +32,8 @@ jobs:
 
       - name: Print envs
         run: |
-          echo $GOPATH
-          pwd
+          /usr/bin/echo $GOPATH
+          /usr/bin/pwd
 
       - name: Get dependencies
         run: |
