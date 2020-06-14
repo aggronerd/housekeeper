@@ -1,0 +1,21 @@
+on: [push, pull_request]
+name: test and build
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.14.4' # The Go version to download (if necessary) and use.
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+      - name: build
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o target/housekeeper-linux-amd64
+      - name: upload artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: binaries
+          path: target/
