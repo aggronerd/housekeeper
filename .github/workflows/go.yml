@@ -24,9 +24,9 @@ jobs:
 
       - name: Get dependencies
         run: |
-          mkdir -p /home/runner/housekeeper/go/src/github.com/aggronerd/
-          ln -s housekeeper /home/runner/housekeeper/go/src/github.com/aggronerd/housekeeper
-          cd /home/runner/housekeeper/go/src/github.com/aggronerd/housekeeper
+          mkdir -p /home/runner/go/src/github.com/aggronerd/
+          mv housekeeper /home/runner/go/src/github.com/aggronerd/housekeeper
+          cd /home/runner/go/src/github.com/aggronerd/housekeeper
           ls -l
           go get -v -t -d ./...
           if [ -f Gopkg.toml ]; then
