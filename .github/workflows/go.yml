@@ -25,8 +25,9 @@ jobs:
           mkdir -p ${PROJECT_ROOT_PARENT}
       - name: Check out code into GOPATH/src
         uses: actions/checkout@v2
-        with:
-          path: go/src/github.com/aggronerd/housekeeper
+        defaults:
+          run:
+            working-directory: "/home/runner/go/src/github.com/aggronerd"
       - name: Get dependencies
         run: |
           cd ${PROJECT_ROOT}
