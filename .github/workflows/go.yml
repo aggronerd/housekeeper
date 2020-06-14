@@ -25,6 +25,7 @@ jobs:
       - name: Get dependencies
         run: |
           mkdir -p /home/runner/go/src/github.com/aggronerd/
+          cd ..
           mv housekeeper /home/runner/go/src/github.com/aggronerd/housekeeper
           cd /home/runner/go/src/github.com/aggronerd/housekeeper
           ls -l
