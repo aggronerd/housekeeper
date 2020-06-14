@@ -1,36 +1,22 @@
-name: Go
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
+on: [push, pull_request]
+name: test and build
 jobs:
-
   build:
-    name: Build
     runs-on: ubuntu-latest
+    needs: [lint, test]
     steps:
-
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v2
+      - name: Install Go
+        uses: actions/setup-go@v1
         with:
-          go-version: ^1.13
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-
-      - name: Build
+          go-version: 1.14.x
+      - name: Checkout code
+        uses: actions/checkout@v1
+      - name: build
         run: |
-          mkdir -p /home/runner/go/src/github.com/aggronerd/
-          cd ..
-          mv housekeeper /home/runner/go/src/github.com/aggronerd/housekeeper
-          cd /home/runner/go/src/github.com/aggronerd/housekeeper
-          go get -v -t -d ./...
-          if [ -f Gopkg.toml ]; then
-              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-              dep ensure
-          fi
-          go build -v -o target/housekeeper-linux-x64 app.go
+          export GO111MODULE=on
+          GOOS=linux   GOARCH=amd64 go build -o target/ci-test-linux-amd64
+      - name: upload artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: binaries
+          path: target/
