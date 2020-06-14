@@ -26,6 +26,8 @@ jobs:
         run: |
           mkdir -p /home/runner/housekeeper/go/src/github.com/aggronerd/
           ln -s housekeeper /home/runner/housekeeper/go/src/github.com/aggronerd/housekeeper
+          cd /home/runner/housekeeper/go/src/github.com/aggronerd/housekeeper
+          ls -l
           go get -v -t -d ./...
           if [ -f Gopkg.toml ]; then
               curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
