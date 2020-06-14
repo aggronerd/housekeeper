@@ -37,5 +37,6 @@ jobs:
 
       - name: Build
         run: go build -v .
-        with:
-          working-directory: /home/runner/go/src/github.com/aggronerd/housekeeper
+        defaults:
+          run:
+            working-directory: /home/runner/go/src/github.com/aggronerd/housekeeper
