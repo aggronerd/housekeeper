@@ -23,6 +23,8 @@ jobs:
 
       - name: Get dependencies
         run: |
+          mkdir -p /home/runner/go/src/github.com/aggronerd
+          ln -s $(pwd) /home/runner/go/src/github.com/aggronerd/housekeeper
           go get -v -t -d ./...
           if [ -f Gopkg.toml ]; then
               curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
