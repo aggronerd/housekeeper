@@ -18,7 +18,9 @@ jobs:
         id: go
       - name: Make project directory
         run: |
-          mkdir -p /home/runner/go/src/github.com/aggronerd
+          export PROJECT_DIR go/src/github.com/aggronerd
+          mkdir -p $PROJECT_DIR
+          cd $PROJECT_DIR
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
         with:
