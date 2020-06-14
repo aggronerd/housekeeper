@@ -28,7 +28,6 @@ jobs:
           cd ..
           mv housekeeper /home/runner/go/src/github.com/aggronerd/housekeeper
           cd /home/runner/go/src/github.com/aggronerd/housekeeper
-          ls -l
           go get -v -t -d ./...
           if [ -f Gopkg.toml ]; then
               curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
@@ -38,4 +37,4 @@ jobs:
       - name: Build
         run: |
           cd /home/runner/go/src/github.com/aggronerd/housekeeper
-          go build -v .
+          $GOROOT/bin/go build -v .
