@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  GOPATH: /home/runner/housekeeper/go
+
+defaults:
+  run:
+    working-directory: /home/runner/housekeeper/go/src/github.com/aggronerd/housekeeper
+
 jobs:
   build:
     name: Build
@@ -20,16 +27,21 @@ jobs:
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
+        with:
+          path: go/src/github.com/aggronerd/housekeeper
+
+      - name: Print envs
+        run: |
+          env
 
       - name: Get dependencies
         run: |
-          mkdir -p /home/runner/go/src/github.com/aggronerd
-          ln -s $(pwd) /home/runner/go/src/github.com/aggronerd/housekeeper
           go get -v -t -d ./...
           if [ -f Gopkg.toml ]; then
               curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
               dep ensure
           fi
+
       - name: Build
         run: go build -v .
 
