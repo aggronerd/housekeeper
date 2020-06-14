@@ -22,7 +22,7 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: Get dependencies
+      - name: Build
         run: |
           mkdir -p /home/runner/go/src/github.com/aggronerd/
           cd ..
@@ -33,9 +33,4 @@ jobs:
               curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
               dep ensure
           fi
-
-      - name: Build
-        run: |
-          /bin/bash -c "
-            cd /home/runner/go/src/github.com/aggronerd/housekeeper;
-            $GOROOT/bin/go build -v ."
+          go build -v -o target/housekeeper-linux-x64 app.go
