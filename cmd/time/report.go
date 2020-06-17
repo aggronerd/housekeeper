@@ -1,4 +1,4 @@
-// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>. 
+// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>.
 // All rights reserved.
 
 package time
@@ -18,44 +18,45 @@ const searchMaxResults = 100
 
 type tallyEntry struct {
 	duration time.Duration
-	summary string
+	summary  string
 }
 
 type workTally struct {
 	durationMap map[string]*tallyEntry
-	total time.Duration
+	total       time.Duration
 }
 
 func newWorkTally() workTally {
 	return workTally{
 		durationMap: map[string]*tallyEntry{},
-		total: time.Duration(0),
+		total:       time.Duration(0),
 	}
 }
 
-func (w *workTally) Append(issueId string, summary string, duration time.Duration) {
-	val, ok := w.durationMap[issueId]
+func (w *workTally) Append(issueID string, summary string, duration time.Duration) {
+	val, ok := w.durationMap[issueID]
 	if !ok {
-		w.durationMap[issueId] = &tallyEntry{
+		w.durationMap[issueID] = &tallyEntry{
 			duration: duration,
-			summary: summary,
+			summary:  summary,
 		}
- 	} else {
- 		val.duration += duration
+	} else {
+		val.duration += duration
 	}
 	w.total += duration
 }
 
+// Print outputs the details of the workTally as a table
 func (w *workTally) Print() {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Issue ID", "Summary", "Time Spent"})
 	table.SetFooter([]string{"", "Total", w.total.String()})
 	table.SetBorder(false)
-	for _, key := range w.sortedKeys()  {
+	for _, key := range w.sortedKeys() {
 		entry := w.durationMap[key]
 		table.Append([]string{
 			key,
-			TruncateString(entry.summary, 64),
+			truncateString(entry.summary, 64),
 			entry.duration.String(),
 		})
 	}
@@ -73,37 +74,25 @@ func (w *workTally) sortedKeys() []string {
 }
 
 func runReport(_ *cobra.Command, _ []string) {
-	// TODO: let date be a parameter
-	year, month, day := time.Now().Date()
-	// TODO: remove hard-coded time-zone
-	location, err := time.LoadLocation("Europe/London")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dayStart := time.Date(year, month, day, 0, 0, 0, 0, location)
-	dayEnd := dayStart.Add(24 * time.Hour)
-
-	client := GetClient()
+	client := getJiraClient()
 	user, _, err := client.User.GetSelf()
-	FatalIfErr(err)
+	fatalIfErr(err)
 
 	options := jira.SearchOptions{MaxResults: searchMaxResults}
 	issues, result, err := client.Issue.Search(
 		"worklogDate = now() and worklogAuthor = currentUser()", &options)
-	FatalIfErr(err)
+	fatalIfErr(err)
 
 	if result.Total > searchMaxResults {
 		// TODO: implement pagination
-		log.Printf("WARNING: There are %d matching tickets but this only returns %d, " +
+		log.Printf("WARNING: There are %d matching tickets but this only returns %d, "+
 			"results will be incomplete", result.Total, searchMaxResults)
 	}
 
 	tally := newWorkTally()
 	for _, issue := range issues {
 		workLogs, _, err := client.Issue.GetWorklogs(issue.ID)
-		FatalIfErr(err)
+		fatalIfErr(err)
 
 		for _, workLog := range workLogs.Worklogs {
 			workLogStarted := time.Time(*workLog.Started)
@@ -114,7 +103,7 @@ func runReport(_ *cobra.Command, _ []string) {
 				// This work log is relevant
 				tally.Append(issue.Key,
 					issue.Fields.Summary,
-					time.Duration(workLog.TimeSpentSeconds) * time.Second)
+					time.Duration(workLog.TimeSpentSeconds)*time.Second)
 			}
 		}
 	}
@@ -123,7 +112,40 @@ func runReport(_ *cobra.Command, _ []string) {
 }
 
 var reportCmd = &cobra.Command{
-	Use: "report",
+	Use:   "report",
 	Short: "Shows how you have logged time against tickets in Jira",
-	Run: runReport,
+	Run:   runReport,
+}
+
+var dateParameter string
+var dayStart time.Time
+var dayEnd time.Time
+
+func initParameters() {
+	var date time.Time
+	// TODO: remove hard-coded time-zone
+	location, err := time.LoadLocation("Europe/London")
+	fatalIfErr(err)
+	if dateParameter == "" {
+		date = time.Now()
+	} else {
+		date, err = time.ParseInLocation("31/01/2020", dateParameter, location)
+
+		if err != nil {
+			log.Fatalf("Could not parse date, must be in the form dd/mm/yyyy")
+		}
+	}
+	year, month, day := date.Date()
+	dayStart = time.Date(year, month, day, 0, 0, 0, 0, location)
+	dayEnd = dayStart.Add(24 * time.Hour)
+}
+
+func init() {
+	cobra.OnInitialize(initParameters)
+
+	reportCmd.PersistentFlags().StringVar(
+		&dateParameter,
+		"date",
+		"",
+		"Date for the report in the format dd/mm/yyyy (default is today)")
 }

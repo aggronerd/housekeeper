@@ -1,4 +1,4 @@
-// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>. 
+// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>.
 // All rights reserved.
 
 package time
@@ -31,7 +31,7 @@ func getTransport() transport {
 	return nil
 }
 
-func GetClient() *jira.Client {
+func getJiraClient() *jira.Client {
 	transport := getTransport()
 	client, err := jira.NewClient(transport.Client(), viper.GetString("jira.url"))
 
