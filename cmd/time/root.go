@@ -3,7 +3,10 @@
 
 package time
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/aggronerd/housekeeper/cmd/time/report"
+	"github.com/spf13/cobra"
+)
 
 // Cmd contains commands related to time management
 var Cmd = &cobra.Command{
@@ -12,5 +15,5 @@ var Cmd = &cobra.Command{
 }
 
 func init() {
-	Cmd.AddCommand(reportCmd)
+	Cmd.AddCommand(report.Cmd)
 }

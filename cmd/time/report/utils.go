@@ -1,7 +1,7 @@
 // Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>.
 // All rights reserved.
 
-package time
+package report
 
 import "log"
 

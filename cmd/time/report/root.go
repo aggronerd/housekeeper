@@ -1,7 +1,7 @@
 // Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>.
 // All rights reserved.
 
-package time
+package report
 
 import (
 	"fmt"
@@ -79,8 +79,9 @@ func runReport(_ *cobra.Command, _ []string) {
 	fatalIfErr(err)
 
 	options := jira.SearchOptions{MaxResults: searchMaxResults}
-	issues, result, err := client.Issue.Search(
-		"worklogDate = now() and worklogAuthor = currentUser()", &options)
+	jiraDate := dayStart.Format("2006-01-02")
+	jqlQuery := fmt.Sprintf("worklogDate = '%s' and worklogAuthor = currentUser()", jiraDate)
+	issues, result, err := client.Issue.Search(jqlQuery, &options)
 	fatalIfErr(err)
 
 	if result.Total > searchMaxResults {
@@ -111,7 +112,8 @@ func runReport(_ *cobra.Command, _ []string) {
 	tally.Print()
 }
 
-var reportCmd = &cobra.Command{
+// Cmd is a command which gives nicely detailed summary of Jira tickets for the day
+var Cmd = &cobra.Command{
 	Use:   "report",
 	Short: "Shows how you have logged time against tickets in Jira",
 	Run:   runReport,
@@ -129,10 +131,11 @@ func initParameters() {
 	if dateParameter == "" {
 		date = time.Now()
 	} else {
-		date, err = time.ParseInLocation("31/01/2020", dateParameter, location)
+		date, err = time.ParseInLocation("20060102", dateParameter, location)
 
 		if err != nil {
-			log.Fatalf("Could not parse date, must be in the form dd/mm/yyyy")
+			log.Fatalf(
+				"Could not parse date, must be in the form yyyyMMdd (eg. \"20121225\")")
 		}
 	}
 	year, month, day := date.Date()
@@ -143,7 +146,7 @@ func initParameters() {
 func init() {
 	cobra.OnInitialize(initParameters)
 
-	reportCmd.PersistentFlags().StringVar(
+	Cmd.PersistentFlags().StringVar(
 		&dateParameter,
 		"date",
 		"",
