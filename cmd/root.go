@@ -1,4 +1,4 @@
-// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>. 
+// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>.
 // All rights reserved.
 
 package cmd
@@ -24,6 +24,7 @@ var (
 	}
 )
 
+// Execute is the main function for running the commands.
 func Execute() error {
 	return rootCmd.Execute()
 }

@@ -1,17 +1,17 @@
-// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>. 
+// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>.
 // All rights reserved.
 
-package time
+package report
 
 import "log"
 
-func FatalIfErr(err error) {
+func fatalIfErr(err error) {
 	if err != nil {
 		log.Fatalf("Got fatal error: %s", err)
 	}
 }
 
-func TruncateString(str string, length int) string {
+func truncateString(str string, length int) string {
 	output := str
 	if len(str) > length {
 		if length > 3 {

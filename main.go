@@ -1,4 +1,4 @@
-// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>. 
+// Copyright 2019 Gregory Doran <greg@gregorydoran.co.uk>.
 // All rights reserved.
 
 package main
@@ -15,5 +15,3 @@ func main() {
 		log.Fatal(err)
 	}
 }
-
-
