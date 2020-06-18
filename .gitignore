@@ -17,3 +17,6 @@ vendor/
 
 # IDE config
 .idea
+
+# Output folder
+dist/*
